@@ -19,7 +19,7 @@ const run = async () => {
 		// await task9(); // +
 		// await task10(); // +
 		// await task11(); // +
-		await task12();
+		await task12(); // +
 
 		await close();
 	} catch (err) {
@@ -268,6 +268,22 @@ async function task12() {
 		.aggregate([
 			{
 				$unwind: '$scores',
+			},
+			{
+				$group: {
+					_id: '$name',
+					avg_scores: { $avg: '$scores.score' },
+				},
+			},
+			{
+				$sort: { avg_scores: -1 },
+			},
+			{
+				$project: {
+					_id: 0,
+					name: '$_id',
+					avg_scores: 1,
+				},
 			},
 		])
 		.toArray();
